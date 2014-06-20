@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Layouts - Do's and Don'ts</title>
+  <script src="https://s0.2mdn.net/ads/studio/Enabler.js"></script>
+  <link rel="stylesheet" type="text/css" href="filler.css">
+  <style type="text/css">
+    div.eye {
+      -moz-border-radius: 10px;
+      border-radius: 10px;
+      width: 20px;
+      height: 20px;
+      border: 1px solid black;
+    }
+    img.photo {
+      width: 75px;
+    }
+  </style>
+  <script>
+    // Configurable API.
+    var configurable, config, binding;
+    // Main configuration fragment reference.
+    var root;
+
+    // Exit properties.
+    var exitProperties = {
+      EXIT_NAME: 'Jump To Hyperspace',
+      EXIT_URL: 'http://goo.gl/r8tosx'
+    }
+
+    // Declared type names.
+    var types = {
+      JEDI: 'JediType',
+      SITH: 'SithType',
+    }
+
+    studio.utils.EnablerAccessor.loadModuleWhenReady(
+        studio.module.ModuleId.CONFIGURABLE_FILLER, loadModuleHandler);
+
+    function loadModuleHandler() {
+      configurable = studio.sdk.configurable;
+      config = configurable.config;
+      binding = configurable.binding;
+
+      // Declare configurable types/classes.
+      config.declare(types.JEDI, {  // Won't work in Studio.
+        '@exit': getExitName(),  // Won't work in Studio.
+        'lightSaberColor': '#0000ff'
+      });
+
+      config.declare(types.SITH, {  // Won't work in Studio.
+        'darthName': 'Sidious',
+        'cloackColor': '#000000'
+      });
+
+      // Declare main configuration.
+      config.declare('StarWars', {
+        'jedi': { '@type': getJediType() },  // Won't work in Studio.
+        'sith': { '@type': getSithType() }  // Won't work in Studio.
+      });
+
+      // Instantiate.
+      var configuration = config.instantiate('StarWars', {});
+
+      // Register.
+      configurable.register(configuration, registerHandler);
+    }
+
+    // Factory methods.
+    function getExitName() {
+      return exitProperties.EXIT_NAME;
+    }
+
+    function getJediType() {
+      return types.JEDI;
+    }
+
+    function getSithType() {
+      return types.SITH;
+    }
+
+    function registerHandler(object) {
+      console.dir(object);
+      root = object;
+
+      // Local filler setup.
+      if (configurable.Filler &&
+          configurable.getRuntimeMode() == configurable.RUNTIME_MODE.DEVELOPMENT) {
+        var div = document.createElement('div');
+        div.id = 'filler';
+        document.body.appendChild(div);
+        configurable.Filler.display(div, object);
+      }
+
+      // Create exit button.
+      var button = document.createElement('button');
+      button.textContent = 'Jump Chewie, Jump!!!';
+      button.addEventListener('click', fireExit, false);
+      document.body.appendChild(button);
+
+      binding.addValueChangeListener(object, changeHandler);
+      binding.fireAllListeners(object);
+    }
+
+    function fireExit() {
+      configurable.exit(root.jedi,
+                        exitProperties.EXIT_NAME,
+                        exitProperties.EXIT_URL);
+    }
+
+    function changeHandler(object) {
+      console.log('changeHandler', object);
+    }
+  </script>
+</head>
+<body>
+</body>
+</html>

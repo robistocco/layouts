@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <title>Layouts - Context</title>
+    <script src="http://s0.2mdn.net/ads/studio/Enabler.js"></script>
+    <script>
+      // Aliases for studio.sdk.*.
+      var configurable, binding, config, enabler;
+      studio.utils.EnablerAccessor.loadModuleWhenReady(
+          studio.module.ModuleId.CONFIGURABLE, loadModuleHandler);
+
+      function loadModuleHandler() {
+        configurable = studio.sdk.configurable;
+        binding = configurable.binding;
+        config = configurable.config;
+        enabler = studio.Enabler.getInstance();
+
+        config.declare('Simple', { 'foo': 'bar' });
+        config.declare('root', { 'simple': { '@type': 'Simple' } });
+
+        console.group('before timeout');
+        console.log('runtime', configurable.getRuntimeMode());
+        console.log('context', configurable.getFillerContext());
+        console.log('liveEnvironment', enabler.getParameter('liveEnvironment'));
+        console.groupEnd();
+
+        setTimeout(function(){
+          console.group('after  timeout | before "configurable.register"');
+          console.log('runtime', configurable.getRuntimeMode());
+          console.log('context', configurable.getFillerContext());
+          console.log('liveEnvironment',
+                      enabler.getParameter('liveEnvironment'));
+          console.groupEnd();
+
+          var runtime = document.getElementById('runtime');
+          var context = document.getElementById('context');
+          var env = document.getElementById('env');
+
+          var configuration = config.instantiate('root', {});
+          configurable.register(configuration, function (root) {});
+
+          console.group('after  timeout | after "configurable.register"');
+          console.log('runtime', configurable.getRuntimeMode());
+          console.log('context', configurable.getFillerContext());
+          console.log('liveEnvironment',
+                      enabler.getParameter('liveEnvironment'));
+          console.groupEnd();
+
+          runtime.innerText = configurable.getRuntimeMode();
+          context.innerText = configurable.getFillerContext();
+          env.innerText = enabler.getParameter('liveEnvironment');
+        }, 1000);
+      }
+    </script>
+  </head>
+  <body>
+    RUNTIME: <span id="runtime"></span><br>
+    CONTEXT: <span id="context"></span><br>
+    LIVE ENVIRONMENT: <span id="env"></span>
+  </body>
+</html>

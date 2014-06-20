@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Layouts - Optionals</title>
+  <script src="https://s0.2mdn.net/ads/studio/Enabler.js"></script>
+  <script>
+    // Configurable API.
+    var configurable, config, binding;
+    // Main configuration fragment reference.
+    var root;
+
+    studio.utils.EnablerAccessor.loadModuleWhenReady(
+        studio.module.ModuleId.CONFIGURABLE, loadModuleHandler);
+
+    function loadModuleHandler() {
+      configurable = studio.sdk.configurable;
+      config = configurable.config;
+      binding = configurable.binding;
+
+      // Declare configurable types/classes.
+      config.declare('Droid', {
+        'modelName': 'R2-D2',
+        'armorColor': '#ffffff',
+        'cpuSpeed': 20
+      });
+
+      config.declare('Character', {
+        'name': 'Luke Skywalker',
+        'droid': {
+          '@type': 'Droid',
+          '@required': false
+        }
+      });
+
+      // Declare main configuration.
+      config.declare('StarWars', {
+        'character': { '@type': 'Character' }
+      });
+
+      // Instantiate.
+      var configuration = config.instantiate('StarWars', {});
+
+      // Register.
+      configurable.register(configuration, registerHandler);
+    }
+
+    function registerHandler(object) {
+      console.log('registerHandler', object);
+
+      binding.addValueChangeListener(object, function(object) {
+        console.log('changeHandler', object);
+      });
+      binding.fireAllListeners(object);
+    }
+  </script>
+</head>
+<body>
+</body>
+</html>

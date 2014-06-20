@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Layouts - Update Filler</title>
+  <style type="text/css">
+  #droid, #wookiee {
+    display: none;
+  }
+
+  #droid > div, #wookiee > div {
+    font: normal 12px Tahoma;
+    margin-bottom: 4px;
+  }
+  </style>
+  <script src="http://s0.2mdn.net/ads/studio/Enabler.js"></script>
+  <script>
+    studio.utils.EnablerAccessor.loadModuleWhenReady(
+        studio.module.ModuleId.CONFIGURABLE, loadModuleHandler);
+
+    function loadModuleHandler() {
+      Enabler.loadScript(Enabler.getUrl('06_update_filler.js'), function() {});
+    }
+  </script>
+</head>
+<body>
+  <div id="droid">
+    <div></div>
+    <img src="http://starwars.com/explore/encyclopedia/technology/battledroid/battledroid_detail.png"
+         style="height: 200px">
+  </div>
+  <div id="wookiee">
+    <div></div>
+    <img src="http://img2.wikia.nocookie.net/__cb20130506151115/jedipedia/de/images/b/bb/Tarfful_detail.png"
+         style="height: 200px">
+  </div>
+</body>
+</html>

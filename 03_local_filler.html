@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Layouts - Local Filler</title>
+  <script src="http://s0.2mdn.net/ads/studio/Enabler.js"></script>
+  <link rel="stylesheet" type="text/css" href="filler.css">
+  <script>
+    // Configurable API.
+    var configurable, config, binding;
+
+    studio.utils.EnablerAccessor.loadModuleWhenReady(
+        studio.module.ModuleId.CONFIGURABLE_FILLER, loadModuleHandler);
+
+    function loadModuleHandler() {
+      configurable = studio.sdk.configurable;
+      config = configurable.config;
+      binding = configurable.binding;
+
+      // Declare configurable types/classes.
+      config.declare('Fruit', {
+        'name': 'generic fruit',
+        'color': '#ffffff'
+      });
+
+      // Declare main configuration.
+      config.declare('Main', {
+        'foo': {
+          '@type': 'Fruit'
+        },
+        'bar': {
+          '@type': 'Fruit'
+        }
+      });
+
+      // Instantiate.
+      var configuration = config.instantiate('Main', {});
+
+      // Register.
+      configurable.register(configuration, registerHandler);
+    }
+
+    function registerHandler(object) {
+      // Display local filler.
+      configurable.Filler.display(document.getElementById('filler'), object);
+      console.dir(object);
+    }
+  </script>
+</head>
+<body>
+  <div id="filler"></div>
+</body>
+</html>

@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Layouts - Bind</title>
+  <script src="http://s0.2mdn.net/ads/studio/Enabler.js"></script>
+  <link rel="stylesheet" type="text/css" href="filler.css">
+  <script>
+    // Configurable API.
+    var configurable, config, binding;
+
+    studio.utils.EnablerAccessor.loadModuleWhenReady(
+        studio.module.ModuleId.CONFIGURABLE_FILLER, loadModuleHandler);
+
+    function loadModuleHandler() {
+      configurable = studio.sdk.configurable;
+      config = configurable.config;
+      binding = configurable.binding;
+
+      // Declare configurable types/classes.
+      studio.sdk.configurable.config.declare('Fruit', {
+        'name': '',
+        'color': '#ffffff'
+      });
+
+      // Declare main configuration.
+      studio.sdk.configurable.config.declare('Main', {
+        'foo': { '@type': 'Fruit' },
+        'bar': { '@type': 'Fruit' }
+      });
+
+      // Instantiate.
+      var configuration = studio.sdk.configurable.config.instantiate('Main', {
+        'foo': {
+          'name': 'orange',
+          'color': '#ff9900'
+        },
+        'bar': {
+          'name': 'banana',
+          'color': '#ffff00'
+        }
+      });
+
+      // Register.
+      configurable.register(configuration, registerHandler);
+    }
+
+    function registerHandler(object) {
+      // Display local filler. Don't upload to Studio as is!!!
+      configurable.Filler.display(document.getElementById('filler'), object);
+      binding.addValueChangeListener(object, valueChangeListener);
+      binding.addValueChangeListener(object.foo, fooValueChangeListener);
+      binding.addPropertyChangeListener(object.foo, 'name', propertyChangeListener);
+    }
+
+    function valueChangeListener(object) {
+      console.log('valueChangeListener', object);
+    }
+
+    function fooValueChangeListener(object) {
+      console.log('fooValueChangeListener', object);
+    }
+
+    function propertyChangeListener(object) {
+      console.log('propertyChangeListener', object);
+    }
+  </script>
+</head>
+<body>
+  <div id="filler"></div>
+</body>
+</html>

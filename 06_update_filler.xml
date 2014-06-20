@@ -1,0 +1,32 @@
+<dimensionVariant dimension='300x250'>
+  <primaryAsset originalFilename='06_update_filler.html' leftOffset='0' topOffset='0' wmode='OPAQUE' expansionMode='NORMAL' pushdownDuration=''>
+    <class name='StarWars'>
+      <property id='character' optional='true'></property>
+    </class>
+    <class name='CharacterType'>
+      <property id='name' optional='true' type='STRING'><![CDATA[-- Choose --]]></property>
+      <property id='droid' optional='true' type='STRING'><![CDATA[]]></property>
+      <property id='wookiee' optional='true' type='STRING'><![CDATA[]]></property>
+    </class>
+    <defaultValue id='root' type='StarWars' editable='true'>
+      <registeredObject id='character' type='CharacterType' editable='true'>
+        <property id='name' type='STRING' editable='true'><![CDATA[-- Choose --]]></property>
+        <property id='droid' type='STRING' editable='true'><![CDATA[]]></property>
+        <property id='wookiee' type='STRING' editable='true'><![CDATA[]]></property>
+      </registeredObject>
+    </defaultValue>
+    <specNode selector='...@{CharacterType}' title='Character'></specNode>
+    <specNode selector='...@{CharacterType}.droid' title='Droid'></specNode>
+    <specNode selector='...@{CharacterType}.name' title='Name'>
+      <restriction name='StringEnumRestriction'>
+        <restrictionArgumentArray>
+          <argumentArrayItem><![CDATA[-- Choose --]]></argumentArrayItem>
+          <argumentArrayItem><![CDATA[Luke]]></argumentArrayItem>
+          <argumentArrayItem><![CDATA[Leia]]></argumentArrayItem>
+          <argumentArrayItem><![CDATA[Han]]></argumentArrayItem>
+        </restrictionArgumentArray>
+      </restriction>
+    </specNode>
+    <specNode selector='...@{CharacterType}.wookiee' title='Wookie'></specNode>
+  </primaryAsset>
+</dimensionVariant>

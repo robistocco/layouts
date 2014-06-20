@@ -1,0 +1,30 @@
+#filler div {
+  font-family: Tahoma, Verdana, sans-serif;
+  font-size: 12px;
+  padding: 1px;
+  display: block;
+}
+
+/* Header. */
+#filler > div > div > div:first-child {
+  background-color: #dddddd;
+  font-weight: bold;
+}
+
+/* Fields. */
+#filler > div > div > div:nth-of-type(2) {
+  background-color: #eeeeee;
+}
+
+/* Instance name. */
+#filler > div > div > div:nth-of-type(2) > div > div:first-child {
+  vertical-align: top;
+  font-weight: bold;
+  padding: 2px;
+}
+
+/* Class name. */
+#filler > div > div > div:nth-of-type(2) > div > div:nth-of-type(2) > div:first-child > div:first-child {
+  vertical-align: top;
+  font-style: italic;
+}

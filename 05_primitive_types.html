@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Layouts - Primitive Types</title>
+  <link rel="stylesheet" type="text/css" href="filler.css">
+  <style type="text/css">
+    div.eye {
+      -moz-border-radius: 10px;
+      border-radius: 10px;
+      width: 20px;
+      height: 20px;
+      border: 1px solid black;
+    }
+    img.photo {
+      width: 75px;
+    }
+  </style>
+  <script src="http://s0.2mdn.net/ads/studio/Enabler.js"></script>
+  <script>
+    // Configurable API.
+    var configurable, config, binding;
+    // Main configuration fragment reference.
+    var root;
+
+    studio.utils.EnablerAccessor.loadModuleWhenReady(
+        studio.module.ModuleId.CONFIGURABLE_FILLER, loadModuleHandler);
+
+    function loadModuleHandler() {
+      configurable = studio.sdk.configurable;
+      config = configurable.config;
+      binding = configurable.binding;
+
+      // Declare configurable types/classes.
+      config.declare('Person', {
+        'firstName': 'John',
+        'lastName': 'Doe',
+        'eyesColor': '#ffffff',
+        'age': 0,
+        'photo': {
+          '@type': 'image',
+          '@value': ''  // Just for local filler.
+        }
+      });
+
+      // Declare main configuration.
+      config.declare('Family', {
+        'father': { '@type': 'Person' },
+        'mother': { '@type': 'Person' },
+        'child': { '@type': 'Person' }
+      });
+
+      // Instantiate.
+      var configuration = config.instantiate('Family', {});
+
+      // Register.
+      configurable.register(configuration, registerHandler);
+    }
+
+    function registerHandler(object) {
+      console.dir(object);
+      root = object;
+
+      if (configurable.Filler &&
+          configurable.getRuntimeMode() == configurable.RUNTIME_MODE.DEVELOPMENT) {
+        var div = document.createElement('div');
+        div.id = 'filler';
+        window.parent.document.body.appendChild(div);
+        configurable.Filler.display(div, object);
+      }
+
+      binding.addValueChangeListener(root['father'], fatherUpdateHandler);
+      binding.addValueChangeListener(root['mother'], motherUpdateHandler);
+      binding.addValueChangeListener(root['child'], childUpdateHandler);
+      binding.fireAllListeners(root);
+    }
+
+    function fatherUpdateHandler(object) {
+      // console.log('fatherHandler');
+      updatePerson('father');  // No need to pass the object.
+    }
+
+    function motherUpdateHandler(object) {
+      // console.log('motherHandler');
+      updatePerson('mother');
+    }
+
+    function childUpdateHandler(object) {
+      // console.log('childHandler');
+      updatePerson('child');
+    }
+
+    function updatePerson(type) {
+      document.getElementById(type + '-name').textContent =
+          root[type].firstName + ' ' + root[type].lastName +
+          ' (' + root[type].age + ')';
+      document.getElementById(type + '-eyes').style.backgroundColor =
+          root[type].eyesColor;
+
+      // Use Enabler.getUrl() to get the proper url.
+      // Also: an image property is nullable, so check before Enabler.getUrl().
+      var photo = root[type].photo ? Enabler.getUrl(root[type].photo) : null;
+      if (photo) {
+        document.getElementById(type + '-photo').src = photo;
+      } else {
+        document.getElementById(type + '-photo').src = '';
+      }
+    }
+  </script>
+</head>
+<body>
+  <table>
+    <tr>
+      <td>
+        Father: <span id="father-name"></span>
+        <div id="father-eyes" class="eye">&nbsp;</div><br>
+        <img id="father-photo" class="photo">
+      </td>
+      <td>
+        Mother: <span id="mother-name"></span>
+        <div id="mother-eyes" class="eye">&nbsp;</div><br>
+        <img id="mother-photo" class="photo">
+      </td>
+    </tr>
+    <tr>
+      <td colspan="2">
+        Child: <span id="child-name"></span>
+        <div id="child-eyes" class="eye">&nbsp;</div><br>
+        <img id="child-photo" class="photo">
+      </td>
+    </tr>
+  </table>
+</body>
+</html>

@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Layouts - Arrays</title>
+  <link rel="stylesheet" type="text/css" href="filler.css">
+  <script src="https://s0.2mdn.net/ads/studio/Enabler.js"></script>
+  <script>
+    // Configurable API.
+    var configurable, config, binding;
+    // Main configuration fragment reference.
+    var root;
+
+    studio.utils.EnablerAccessor.loadModuleWhenReady(
+        studio.module.ModuleId.CONFIGURABLE_FILLER, loadModuleHandler);
+
+    function loadModuleHandler() {
+      configurable = studio.sdk.configurable;
+      config = configurable.config;
+      binding = configurable.binding;
+
+      // Declare configurable types/classes.
+      config.declare('Person', {
+        'firstName': 'John',
+        'lastName': 'Doe'
+      });
+
+      // Declare main configuration.
+      config.declare('Family', {
+        'persons': {
+          '@type': 'Person',
+          '@array': true
+        }
+      });
+
+      // Instantiate.
+      var configuration = config.instantiate('Family', {});
+
+      // Register.
+      configurable.register(configuration, registerHandler);
+    }
+
+    function registerHandler(object) {
+      console.log('registerHandler', object);
+      root = object;
+
+      if (configurable.Filler &&
+          configurable.getRuntimeMode() == configurable.RUNTIME_MODE.DEVELOPMENT) {
+        var div = document.createElement('div');
+        div.id = 'filler';
+        document.body.appendChild(div);
+        configurable.Filler.display(div, object);
+      }
+
+      binding.addValueChangeListener(root, changeHandler);
+
+      binding.addArrayInsertListener(root, 'persons',
+          function(value, index, array) {
+        console.log('arrayInsertListener', value, index);
+        // renderPerson(value);
+      });
+
+      binding.addArrayRemoveListener(root, 'persons',
+          function(value, index, array) {
+        console.log('arrayRemoveListener', value, index);
+        // removePerson(value);
+      });
+
+      binding.fireAllListeners(root);
+    }
+
+    function changeHandler(object) {
+      console.log('changeHandler', object);
+      for (var i = 0; i < object.persons.length; i++) {
+        // updatePerson(object.persons[i]);
+      }
+    }
+
+    /*
+    function renderPerson(object) {
+      var div = document.createElement('div');
+      div.id = 'p' + object['@id'];
+      div.textContent = [object.firstName, object.lastName].join(' ');
+      div.style.cssText =
+          'font: normal 12px Tahoma; border-bottom: 1px solid black;';
+      document.body.appendChild(div);
+    }
+
+    function removePerson(object) {
+      var div = document.getElementById('p' + object['@id']);
+      if (div) {
+        div.parentElement.removeChild(div);
+      }
+    }
+
+    function updatePerson(object) {
+      var div = document.getElementById('p' + object['@id']);
+      if (div) {
+        div.textContent = [object.firstName, object.lastName].join(' ');
+      }
+    }
+    */
+  </script>
+</head>
+<body>
+</body>
+</html>
