@@ -56,13 +56,13 @@
       binding.addArrayInsertListener(root, 'persons',
           function(value, index, array) {
         console.log('arrayInsertListener', value, index);
-        // renderPerson(value);
+        renderPerson(value);
       });
 
       binding.addArrayRemoveListener(root, 'persons',
           function(value, index, array) {
         console.log('arrayRemoveListener', value, index);
-        // removePerson(value);
+        removePerson(value);
       });
 
       binding.fireAllListeners(root);
@@ -71,11 +71,10 @@
     function changeHandler(object) {
       console.log('changeHandler', object);
       for (var i = 0; i < object.persons.length; i++) {
-        // updatePerson(object.persons[i]);
+        updatePerson(object.persons[i]);
       }
     }
 
-    /*
     function renderPerson(object) {
       var div = document.createElement('div');
       div.id = 'p' + object['@id'];
@@ -98,7 +97,6 @@
         div.textContent = [object.firstName, object.lastName].join(' ');
       }
     }
-    */
   </script>
 </head>
 <body>
