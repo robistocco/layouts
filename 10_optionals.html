@@ -50,6 +50,11 @@
       binding.addValueChangeListener(object, function(object) {
         console.log('changeHandler', object);
       });
+      
+      binding.addValueAddedListener(object.character, 'droid', function(value) {
+        console.log('addValueAddedListener', value);
+      });
+      
       binding.fireAllListeners(object);
     }
   </script>
