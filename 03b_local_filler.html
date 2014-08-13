@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<head>
+  <title>Layouts - Local Filler</title>
+  <script src="https://s0.2mdn.net/ads/studio/Enabler.js"></script>
+  <script>
+    // Configurable API.
+    var configurable, config, binding;
+    
+    if (Enabler.isInitialized()) {
+      init();
+    } else {
+      Enabler.addEventListener(studio.events.StudioEvent.INIT, init);
+    }
+
+    function init() {
+      var Environment = studio.common.Environment;
+      var isLocal = Environment.hasType(Environment.Type.LOCAL);
+      var moduleId = isLocal ?
+          studio.module.ModuleId.CONFIGURABLE_FILLER :
+          studio.module.ModuleId.CONFIGURABLE;
+      studio.utils.EnablerAccessor.loadModuleWhenReady(
+          moduleId, loadModuleHandler);
+    }
+
+    function loadModuleHandler() {
+      configurable = studio.sdk.configurable;
+      config = configurable.config;
+      binding = configurable.binding;
+
+      // Declare configurable types/classes.
+      config.declare('Fruit', {
+        'name': 'generic fruit',
+        'color': '#ffffff'
+      });
+
+      // Declare main configuration.
+      config.declare('Main', {
+        'foo': {
+          '@type': 'Fruit'
+        },
+        'bar': {
+          '@type': 'Fruit'
+        }
+      });
+
+      // Instantiate.
+      var configuration = config.instantiate('Main', {});
+
+      // Register.
+      configurable.register(configuration, registerHandler);
+    }
+
+    function registerHandler(object) {
+      // Display local filler.
+      if (configurable.Filler && configurable.getRuntimeMode() == configurable.RUNTIME_MODE.DEVELOPMENT) {
+        var div = document.createElement('div');
+        window.document.body.appendChild(div);
+        configurable.Filler.display(div, object);
+      }
+    }
+  </script>
+</head>
+<body></body>
