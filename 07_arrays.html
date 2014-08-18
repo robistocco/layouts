@@ -2,16 +2,37 @@
 <html lang="en">
 <head>
   <title>Layouts - Arrays</title>
-  <link rel="stylesheet" type="text/css" href="filler.css">
   <script src="https://s0.2mdn.net/ads/studio/Enabler.js"></script>
   <script>
     // Configurable API.
     var configurable, config, binding;
     // Main configuration fragment reference.
     var root;
+    // Array to keep references to the runtime constructed <div>'s.
+    var persons = [];
 
-    studio.utils.EnablerAccessor.loadModuleWhenReady(
-        studio.module.ModuleId.CONFIGURABLE_FILLER, loadModuleHandler);
+    if (Enabler.isInitialized()) {
+      init();
+    } else {
+      Enabler.addEventListener(studio.events.StudioEvent.INIT, init);
+    }
+
+    function init() {
+      var Environment = studio.common.Environment;
+      var isLocal = Environment.hasType(Environment.Type.LOCAL);
+      var moduleId = isLocal ?
+          studio.module.ModuleId.CONFIGURABLE_FILLER :
+          studio.module.ModuleId.CONFIGURABLE;
+      studio.utils.EnablerAccessor.loadModuleWhenReady(
+          moduleId, loadModuleHandler);
+      if (isLocal) {
+        var link = document.createElement('link');
+        link.setAttribute('rel', 'stylesheet');
+        link.setAttribute('type', 'text/css');
+        link.setAttribute('href', 'filler.css');
+        document.head.appendChild(link);
+      }
+    }
 
     function loadModuleHandler() {
       configurable = studio.sdk.configurable;
@@ -56,13 +77,13 @@
       binding.addArrayInsertListener(root, 'persons',
           function(value, index, array) {
         console.log('arrayInsertListener', value, index);
-        renderPerson(value);
+        renderPerson(value, index);
       });
 
       binding.addArrayRemoveListener(root, 'persons',
           function(value, index, array) {
         console.log('arrayRemoveListener', value, index);
-        removePerson(value);
+        removePerson(value, index);
       });
 
       binding.fireAllListeners(root);
@@ -71,28 +92,29 @@
     function changeHandler(object) {
       console.log('changeHandler', object);
       for (var i = 0; i < object.persons.length; i++) {
-        updatePerson(object.persons[i]);
+        updatePerson(object.persons[i], i);
       }
     }
 
-    function renderPerson(object) {
+    function renderPerson(object, index) {
       var div = document.createElement('div');
-      div.id = 'p' + object['@id'];
       div.textContent = [object.firstName, object.lastName].join(' ');
       div.style.cssText =
           'font: normal 12px Tahoma; border-bottom: 1px solid black;';
       document.body.appendChild(div);
+      persons[index] = div;
     }
 
-    function removePerson(object) {
-      var div = document.getElementById('p' + object['@id']);
+    function removePerson(object, index) {
+      var div = persons[index];
       if (div) {
         div.parentElement.removeChild(div);
       }
+      persons.splice(index, 1);
     }
 
-    function updatePerson(object) {
-      var div = document.getElementById('p' + object['@id']);
+    function updatePerson(object, index) {
+      var div = persons[index];
       if (div) {
         div.textContent = [object.firstName, object.lastName].join(' ');
       }
